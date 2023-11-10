@@ -1,1 +1,0 @@
-# Plausible.io Helm
