@@ -3,6 +3,13 @@ name: plausible
 description: A Helm chart for Plausible.io
 icon: https://raw.githubusercontent.com/plausible/analytics/master/assets/static/images/icon/plausible_favicon.png
 
+sources:
+  - https://github.com/larsl-net/plausible.io-Helm
+
+maintainers:
+  - name: Lars Lehmann
+    url: https://larsl.net
+  
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
