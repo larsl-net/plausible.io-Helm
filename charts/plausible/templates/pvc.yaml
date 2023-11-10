@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "plausible.fullname" . }}-db
+  labels:
+    {{- include "plausible.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.plausible.db.storage.accessMode }}
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: {{ .Values.plausible.db.storage.size }}
+  {{- if .Values.plausible.db.storage.storageClass }}
+  storageClassName: {{ .Values.plausible.db.storage.storageClass }}
+  {{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "plausible.fullname" . }}-eventdb
+  labels:
+    {{- include "plausible.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.plausible.eventdb.storage.accessMode }}
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: {{ .Values.plausible.eventdb.storage.size }}
+  {{- if .Values.plausible.eventdb.storage.storageClass }}
+  storageClassName: {{ .Values.plausible.eventdb.storage.storageClass }}
+  {{- end }}
+...

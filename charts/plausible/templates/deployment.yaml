@@ -1,0 +1,233 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "plausible.fullname" . }}
+  labels:
+    {{- include "plausible.labels" . | nindent 4 }}
+    app.kubernetes.io/component: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "plausible.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      {{- with .Values.plausible.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "plausible.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: app
+    spec:
+      {{- with .Values.plausible.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "plausible.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.plausible.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.plausible.securityContext | nindent 12 }}
+          image: "{{ .Values.plausible.image.registry }}/{{ .Values.plausible.image.repository }}:{{ .Values.plausible.image.tag }}"
+          imagePullPolicy: {{ .Values.plausible.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.plausible.service.port }}
+              protocol: TCP
+          args:
+            - "sh"
+            - "-c"
+            - "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
+          envFrom:
+            - secretRef:
+                name: {{ include "plausible.fullname" . }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.plausible.resources | nindent 12 }}
+      {{- with .Values.plausible.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.plausible.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.plausible.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "plausible.fullname" . }}-db
+  labels:
+    {{- include "plausible.labels" . | nindent 4 }}
+    app.kubernetes.io/component: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "plausible.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      {{- with .Values.plausible.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "plausible.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: db
+    spec:
+      {{- with .Values.plausible.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "plausible.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.plausible.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.plausible.securityContext | nindent 12 }}
+          image: "{{ .Values.plausible.db.image.registry }}/{{ .Values.plausible.db.image.repository }}:{{ .Values.plausible.db.image.tag }}"
+          imagePullPolicy: {{ .Values.plausible.db.image.pullPolicy }}
+          envFrom:
+            - secretRef:
+                name: {{ include "plausible.fullname" . }}-db
+          ports:
+            - name: db
+              containerPort: 5432
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.plausible.db.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.plausible.db.storage.enabled }}
+            - name: db
+              mountPath: /var/lib/postgresql/data
+              subPath: psql
+            {{- end }}
+          {{- if .Values.plausible.db.extraVolumeMounts }}
+            {{ toYaml .Values.plausible.db.extraVolumeMounts | nindent 12 }}
+          {{- end }}
+      {{- with .Values.plausible.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.plausible.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.plausible.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        {{- if .Values.plausible.db.storage.enabled }}
+        - name: db
+          persistentVolumeClaim:
+            claimName: {{ include "plausible.fullname" . }}-db
+        {{- end }}
+        {{- if .Values.plausible.db.extraVolumes }}
+        {{- toYaml .Values.plausible.db.extraVolumes | nindent 8}}
+        {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "plausible.fullname" . }}-eventdb
+  labels:
+    {{- include "plausible.labels" . | nindent 4 }}
+    app.kubernetes.io/component: eventdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "plausible.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: eventdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      {{- with .Values.plausible.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "plausible.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: eventdb
+    spec:
+      {{- with .Values.plausible.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "plausible.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.plausible.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.plausible.securityContext | nindent 12 }}
+          image: "{{ .Values.plausible.eventdb.image.registry }}/{{ .Values.plausible.eventdb.image.repository }}:{{ .Values.plausible.eventdb.image.tag }}"
+          imagePullPolicy: {{ .Values.plausible.eventdb.image.pullPolicy }}
+          ports:
+            - name: eventdb
+              containerPort: 8123
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.plausible.eventdb.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.plausible.eventdb.storage.enabled }}
+            - name: eventdb
+              mountPath: /var/lib/clickhouse
+              subPath: clickhouse
+            {{- end }}
+            - name: config
+              mountPath: /etc/clickhouse-server/config.d/logging.xml
+              subPath: clickhouse-config.xml
+            - name: config
+              mountPath: /etc/clickhouse-server/users.d/logging.xml
+              subPath: clickhouse-user-config.xml
+          {{- if .Values.plausible.eventdb.extraVolumeMounts }}
+            {{ toYaml .Values.plausible.eventdb.extraVolumeMounts | nindent 12 }}
+          {{- end }}
+      {{- with .Values.plausible.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.plausible.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.plausible.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        {{- if .Values.plausible.eventdb.storage.enabled }}
+        - name: eventdb
+          persistentVolumeClaim:
+            claimName: {{ include "plausible.fullname" . }}-eventdb
+        {{- end }}
+        - name: config
+          configMap:
+            name: {{ include "plausible.fullname" . }}-eventdb
+        {{- if .Values.plausible.eventdb.extraVolumes }}
+        {{- toYaml .Values.plausible.eventdb.extraVolumes | nindent 8}}
+        {{- end }}
+...
