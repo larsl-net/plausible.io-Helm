@@ -121,7 +121,7 @@ plausible:
     image:
       registry: 'docker.io'
       repository: clickhouse/clickhouse-server
-      tag: "23.3.7.5-alpine"
+      tag: "24.3.3.102-alpine"
       pullPolicy: IfNotPresent
 
     storage:
