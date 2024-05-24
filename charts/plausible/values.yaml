@@ -15,6 +15,10 @@ plausible:
   
   imagePullSecrets: []
 
+  secrets:
+    secret_key_base: Null
+    totp_vault_key: Null
+
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
