@@ -170,3 +170,14 @@ plausible:
   tolerations: []
 
   affinity: {}
+
+  # Extra manifests to deploy as an array
+  extraManifests: []
+  # - |
+  #   apiVersion: v1
+  #   kind: ConfigMap
+  #   metadata:
+  #   labels:
+  #     name: plausible-extra
+  #   data:
+  #     extra-data: "value"
