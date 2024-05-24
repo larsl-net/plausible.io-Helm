@@ -1,0 +1,4 @@
+{{ range .Values.plausible.extraManifests }}
+---
+{{ tpl . $ }}
+{{ end }}
