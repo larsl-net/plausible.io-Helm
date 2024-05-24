@@ -3,6 +3,22 @@ entries:
   plausible:
   - apiVersion: v2
     appVersion: 2.0.0
+    created: "2024-05-24T19:05:13.015123326Z"
+    description: A Helm chart for Plausible.io
+    digest: ff0af67a89016816229300435c68fc9ccd42f1bf508bd95ff5d4b48577ca0874
+    icon: https://raw.githubusercontent.com/plausible/analytics/master/assets/static/images/icon/plausible_favicon.png
+    maintainers:
+    - name: Lars Lehmann
+      url: https://larsl.net
+    name: plausible
+    sources:
+    - https://github.com/larsl-net/plausible.io-Helm
+    type: application
+    urls:
+    - https://github.com/larsl-net/plausible.io-Helm/releases/download/plausible-0.0.2/plausible-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 2.0.0
     created: "2023-11-10T19:59:47.40412396Z"
     description: A Helm chart for Plausible.io
     digest: 9eb388039094b37f5fde99a0c95fa425ddb9897ff6a1b870ee38969da8aecb23
@@ -17,4 +33,4 @@ entries:
     urls:
     - https://github.com/larsl-net/plausible.io-Helm/releases/download/plausible-0.0.1/plausible-0.0.1.tgz
     version: 0.0.1
-generated: "2023-11-10T19:59:47.404134289Z"
+generated: "2024-05-24T19:05:13.015158933Z"
