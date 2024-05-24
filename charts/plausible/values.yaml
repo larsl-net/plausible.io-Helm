@@ -9,8 +9,8 @@ plausible:
 
   image:
     registry: 'docker.io'
-    repository: plausible/analytics
-    tag: "v2.0"
+    repository: plausible/community-edition
+    tag: "v2.1.0"
     pullPolicy: IfNotPresent
   
   imagePullSecrets: []

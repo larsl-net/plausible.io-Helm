@@ -42,7 +42,7 @@ spec:
           args:
             - "sh"
             - "-c"
-            - "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
+            - "sleep 10 && /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
           envFrom:
             - secretRef:
                 name: {{ include "plausible.fullname" . }}
