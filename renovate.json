@@ -1,0 +1,6 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "https://larsl.dev/renovate/renovate-config/-/raw/main/default.json?ref_type=heads"
+  ]
+}
