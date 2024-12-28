@@ -10,7 +10,7 @@ plausible:
   image:
     registry: 'docker.io'
     repository: plausible/community-edition
-    tag: "v2.1.0"
+    tag: "v2.1.4"
     pullPolicy: IfNotPresent
   
   imagePullSecrets: []
