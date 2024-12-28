@@ -12,6 +12,8 @@ spec:
     matchLabels:
       {{- include "plausible.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: app
+  strategy:
+    type: Recreate
   template:
     metadata:
       {{- with .Values.plausible.podAnnotations }}
