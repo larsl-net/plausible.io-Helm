@@ -77,7 +77,7 @@ plausible:
     image:
       registry: 'docker.io'
       repository: library/postgres
-      tag: "14-alpine"
+      tag: "18-alpine"
       pullPolicy: IfNotPresent
 
     user: plausible
